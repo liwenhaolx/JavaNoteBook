@@ -122,5 +122,103 @@ jmod中描述了各个模块的依赖关系 所以既精简了题集 还可以�
 
 
 
+## 核心类
 
+* String
+
+  第一个肯定是String晒 这个类极大的方便了对于字符串的需求 
+
+  1. **在这个类中提供了许多的方法这里简单枚举一下详情请看常用类和包装类**
+
+     * 第一要说的就是他的equals() 方法,由于在系统底层对于String的类型是当做常量对待 所以在代码层面我们的得到的其实是一个指向对应的地址 所以
+
+       用== 来判断两个字符串相等显然是不合理的了 因为== 对于引用数据类型是判断地址是否相等即是不是同一个对象
+
+     * contains(String) 看看括号里的字符串在当前的字符串中存不存在
+
+     * indexOf(String)  返回子字符串首次出现的索引
+
+     * lastIndexOf(String)  最后出现的索引
+
+     * startsWith(String)  是否以子字符串开头
+
+     * EndWith(String) 是否以子字符串为结尾
+
+     * subString(int,int) 截取子字符串以索引为标志
+
+     * trim() 去掉开头和结尾的字符串
+
+     * strip() 和 trim相同但是类中文的空格会去掉
+
+     * replace(String,String) 进行替换
+
+     * replaceAll() 进行全部替换
+
+     * split()用于分割
+
+     * format()  格式化 是String的静态方法 第一个参数是对于已经格式好了的字符串进行格式化
+
+     * formatted()不是静态方法 是作用于已经格式化好了的方法参数用于填好占位符
+
+     * 利用toCharArray() 可以实现String 转换成char数组
+
+     * valueOf()  可以将其他类型转换成字符串  **在包装类中也提供了字符串转换为对应包装类的类型**----静态方法
+
+     *   getBytes()  将字符串转换为字节数组 在io流是很有用
+
+* StringBuilder  and  StringBuffer
+
+  这两个都是可变长度的字符串  唯一的不同就是StringBuffer是线程安全就是加了锁的
+
+  对于String的好处在于不用在常量池中因为字符串的修改就重新的创建对象造成了对内存的浪费
+
+  * 里面的几个常用的方法同样是简单枚举
+    * append() 在末尾添加
+    * insert() 指定位置插入
+    * 其他方法....
+
+* 包装类
+
+  包装类其实就是对基本数据类型进行打包 变成引用数据类型
+
+  * **包装类的很多方法同样看包装类和常用类**
+
+* 枚举类
+
+  就是通过关键词Enum来实现的 他的构造器是私有的 换句话说就是他不能在外面被实例化
+
+  * 常用的方法简单枚举
+    * name() 返回常量的名字(底层的原理不是很理解)
+    * ToString() 默认是返回常量名
+    * ordinal() 返回常量的顺序
+    * values() 返回一个包含所有常量的数组
+
+* 记录类 
+
+  他是用来保存一组不变的数据
+
+  ```java
+  record Point(int x, int y){};
+  
+  ```
+
+* BigInteger  and  BigDecimal 
+  * BigInteger 是一个对于很大很大的整数一个专门的类 里面是使用int[] 来实现的
+    * 具体的方法
+    * add() 加
+    * subtract 减
+    * multiply 乘
+    * divide 除
+    * pow 次方
+  * BinDecimal  是高精度 在乎的是精度
+    * 常用的方法
+    * scale() 返回小数的位数
+    * stripTrailingZeros() 去掉末尾的零
+    * n.divideAndReminder(m)  ----- n / m 的商和余数 
+    * 注意在BigDecimal 进行比较的时候 使用CompareTo来比较  因为使用equals() 要进行位数的比较 位数不想等就不会相等
+
+* 还有工具类
+  * Math类就是一个数学工具人 很多静态的方法
+  * Random 生成随机数的类
+  * SecureRandom 生成安全随机数 没有种子
 
