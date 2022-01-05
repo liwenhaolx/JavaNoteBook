@@ -40,7 +40,7 @@ drop database database_name;
 * 要在dos窗口下执行不能在MySQL下执行
 * 语句:  mysqldump -u root -phsp -B 数据库1 数据库2 > 文件名.sql
 * 恢复数据库的话
-* source 文件名.sql (这个又要在MySQL下执行了)
+* source 文件名.sql (这个**又要在MySQL下执行了**)
 
 ## 表的一系列操作
 
@@ -50,20 +50,20 @@ create table table_name (列名 数据类型,列名 数据类型) charset 字符
 -- 修改表
 -- 添加列
 alter table table_name
-add (列名 数据类型) ,(列名 数据类型);
+add (列名 数据类型) ,(列名 数据类型); # 就相当于增加一个变量集合
 --修改一列
 alter table table_name
-modify (要修改的列名 新的数据类型);
+modify (要修改的列名 新的数据类型); # 修改的只是这个列的数据类型
 -- 删除列
 alter table table_name
-drop 列名;
+drop 列名;   # 是直接把这一列干掉
 -- 修改表名
 rename table 表名 to  新表名;
 -- 修改表的字符集
 alter table table_name charset 字符集;
 -- 修改列的名字
 alter table table_name
-column column_name 新名字 数据类型
+column column_name(旧列名) 新名字 数据类型
 -- 显示表的结构
 desc table_name;
 ```
@@ -79,7 +79,7 @@ update table_name
 set column_name1 = value1, column_name2 = value2
 where 过滤的条件 # 如果不加那么就是那一列全部改变
 -- 删除
-delete 列名 from table_name
+delete 列名 from table_name  -- 注意一下 这里删除全行的记录是什么都不加就是删除全行记录 而不是 *
 where # 不加的话就是删除全部的记录 加上条件就只删除哪一个记录
 -- 查询
 select (distinct #这个的意思是去重查找) column1,column2 (* 代表全部的列)
@@ -119,6 +119,8 @@ select column_name as 别名 from table_name;
 | timestamp    | 时间戳           | 可以自动记录时间                                             |
 
 ## mysql 中的函数
+
+* 函数的返回值会被当做一个新的列返回 要显示这个列 就要在**select** 的后面 因此调用函数就是在select的后面 
 
 ```mysql
 -- 合计和统计函数 用来统计个数的
@@ -193,14 +195,14 @@ select instr(string,substring) from dual # 这里说明一下 这个dual 是 系
 -- year() | date() | ....  在括号里可以是任意的时间类型 但是返回会截取相应的一段时间 比如 year() 只会要年的那一部分
 -- unix_timestamp()  返回从1970-1-1 到现在的秒数 
 -- from_unixtime()  将时间戳变成指定格式的日期  %Y-%m-%d %H:%i:%s  占位符的格式是指定的
-!!! 注意可以用 数据库名.表名来指定表
+-- !!! 注意可以用 数据库名.表名来指定表!!!
 
 
 
 
 # 加密函数和系统的函数
--- user()  查看登录的用户是谁
--- database() 查看数据库的名称
+-- user()  查看登录的用户是谁 是正在使用的用户
+-- database() 查看数据库的名称是正在操作的数据库
 -- md5() //32为加密字符串
 -- password() // 系统的加密字符串
 
@@ -219,7 +221,9 @@ select instr(string,substring) from dual # 这里说明一下 这个dual 是 系
 -- 1. 时期类可以比较大小
 -- 2. like 模糊查询 % : 表示是0~多个字符   _ : 代表一个字符 
 -- 3. order by 是支持多个条件排序的  是按照 条件出现的先后顺序来决定优先级的 
--- select * from table_name 
--- order by sal,time   //先按照sal排序 在这个基础上在按照 time来排序  (desc)-- 降序 (asc) -- 升序(默认)
+-- 4.select * from table_name 
+-- 5.order by sal,time   //先按照sal排序 在这个基础上在按照 time来排序  (desc)-- 降序 (asc) -- 升序(默认)
+-- 6. 对于数据的判断要用 = 而对于null的判断要用 is
+-- 8. 逻辑运算是 and -- && , or --- ||  ,not --- !
 ```
 
