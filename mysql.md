@@ -48,7 +48,7 @@ drop database database_name;
 -- 创建表
 create table table_name (列名 数据类型,列名 数据类型) charset 字符集 collate 校对规则 engine 引擎 (默认 和 数据的保持一致);
 -- 修改表
--- 添加一列
+-- 添加列
 alter table table_name
 add (列名 数据类型) ,(列名 数据类型);
 --修改一列
@@ -79,7 +79,7 @@ update table_name
 set column_name1 = value1, column_name2 = value2
 where 过滤的条件 # 如果不加那么就是那一列全部改变
 -- 删除
-delete from table_name
+delete 列名 from table_name
 where # 不加的话就是删除全部的记录 加上条件就只删除哪一个记录
 -- 查询
 select (distinct #这个的意思是去重查找) column1,column2 (* 代表全部的列)
