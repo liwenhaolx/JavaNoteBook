@@ -227,3 +227,115 @@ select instr(string,substring) from dual # 这里说明一下 这个dual 是 系
 -- 8. 逻辑运算是 and -- && , or --- ||  ,not --- !
 ```
 
+## 函数应用进阶
+
+```mysql
+-- 这里开始讲讲函数的综合应用
+
+
+-- 函数的分页查询
+# 就是多了一个limit字句
+-- select ...
+-- limit start,rows  # 解释一下 start 的意思是从start 开始 但是不包括start 的rows行记录
+
+-- 讲讲select语句的子语句的顺序
+-- 先分组 -- 过滤--- 排序---分页
+-- select column from table_name
+-- group by .. 
+-- having ..
+-- order by ..
+-- limit start rows
+# 这里似乎where和having不能共存 我不是很清楚 不一定是对的
+
+-- 看看多表查询
+-- 在没有限制的情况下,多表查询会出现笛卡尔集的问题 什么是笛卡尔集呢
+select column1, column2 from table1 ,table2 
+/* 出现两张表的时候 table1 的每一个元素 和 table的全部元素都要组合一次  */
+/* 还要注意的是 若不出现笛卡尔集的问题 那么限制的条件应该是 总表数 - 1 */
+
+-- 自连接
+/*什么是自连接呢 就是一张表当两张表用  但是不同的是 这样就必须把 表名命名成别名 因为 mysql 对于同名的表没有办法区别
+   然后就是 表名的别名 和 列名不同 是不需要as 的  格式:  表名 别名 */
+   
+-- 子查询 说白了就是查询里面有查询 
+
+# 单行子查询  就是返回的数据只有一行 一行用 =
+# 多行子查询 就是返回的数据有多行 多行判断是否数据在这多行里 用 in
+# 子查询可以看做一张临时的表
+
+-- 关键字 all and any  all : 就是全部都要满足  any : 满足其一就可以 (这两个关键字用于 多行的子查询)
+
+-- 多列查询 这个多列查询是可以用多表查询 代替的 只是在一些情况下 跟简单 尤其是判断相等的时候 
+-- (字段1,字段2) = (select 字段1,字段2 from table_name )  ---( 这是一张临时表 )
+```
+
+
+
+## 表的自我复制
+
+```mysql
+# 表的复制就是将一张表全部的值给他
+
+insert into table_name01
+select field01 field02.. from table_name02
+
+# 自我复制就是
+insert into table_name01
+select * from table_name01
+```
+
+## 合并查询
+
+```MySQL
+# 就是将两个查询语句合并在一起
+-- 用关键字 union -- 去重 (当两个查询语句返回的内容是有相同的时候要去重)
+-- union all -- 不去重
+
+
+```
+
+
+
+## 外连接
+
+* 分为左外连接 和 右外连接
+* 左外连接是指 在两张表匹配的时候就算左边的表没有匹配到的也要显示出来 即 左边的全部都要显示
+* 右外连接 是一样的就不多说了
+
+```MySQL
+select .... from table1 left join table2 on ....(限制条件)  --- 这里的on 就是想当于以前的where
+```
+
+## 约束
+
+约束就是对数据进行一定的限制
+
+
+
+```mysql
+-- 1. 主键  在定义列的后面加上 primary key
+name varchar(32) primary key
+-- 主键是不能重复而且不能为空 还有一张表只能有一个主键 但是可以有复合主键 就是多个列来组成一个主键   格式 : primary key (name,id)
+
+-- 2. 非空
+not null -- 就是非空
+
+-- 3. 唯一(unique) 这个约束是能限制具体的数不能重复 但是null可以重复 可以有多个unique在一张表里
+
+-- 4. foreign key 外键
+-- 主要是用来定义主表和从表之间的关系  外键定义在从表上 而 外键指向主表的字段必须是主键约束 或者 是 unique约束 而且类型要相同 长度可以不同 表的引擎
+-- 必须是 innodb
+foreign key (id) references table(id)
+-- 5. check() 在MySQL5.7 是没有用的,他的意思是限制 字段的范围
+check(id in (1,2,3)) # 意思是 id 只能是 1 或 2或 3
+
+-- 6.enum()虽然check()没用但是数据类型enum是有用的 
+sex enum('男','女')  -- 意思是只能在男女之间选
+
+-- 7.自增长
+auto_increment
+id int auto_increment -- 就是这个字段你不给他值就是让他从1开始在表中添加一个数据他自动加1 (可以给他传数也可以是null  null就是按照系统来) 但是传了数之后 会在表中找最大的数加1后
+-- 作为 下一次的id 
+# 自增长 要和 primary key  或者 unique 来配合这用
+```
+
