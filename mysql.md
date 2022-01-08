@@ -348,3 +348,5 @@ id int auto_increment -- 就是这个字段你不给他值就是让他从1开始
 # 自增长 要和 primary key  或者 unique 来配合这用
 ```
 
+
+
