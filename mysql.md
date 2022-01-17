@@ -350,3 +350,166 @@ id int auto_increment -- 就是这个字段你不给他值就是让他从1开始
 
 
 
+## 索引
+
+* 在MySQL中所以的利用极大的缩小了查找的时间,至于他的底层其实就是一颗查找二叉树当然也不一定反正就是一种便于查找的数据结构
+* 当然在获得了极快的速度的同时也会失去了再改动方面的能力 因为每次改动了数据 那么二叉树就要重新构建所以就会使得效率变慢起来
+
+* 具体的语法如下:
+
+```MySQL
+# 在介绍用法的时候 先说说他的类型做到心中有数
+-- 1. 主键索引 只要他是主键那么他就是主键索引(一个自动的过程)
+-- 2. 唯一索引 就是用来关键词unique修饰了的
+-- 3. 普通索引 这是我们用到最多的
+
+
+# 用法:
+
+-- 1. 添加索引
+create [unique]index index_name on table_name (column_name) -- []表示可以不加
+alter table table_name add index index_name (column_name)
+#特别强调一下主键索引
+alter table table_name add primary key (column_name) /*并没有指定索引名*/
+
+-- 2.删除索引
+drop index index_name on table_name
+alter table table_name drop index index_name
+
+# 同理: 对于主键而言
+alter table table_name drop primary key  /*创建的时候就没有索引名 所以在删除的时候就不会有*/
+-- 3. 查询索引
+show index(es) from table_name
+show keys from table_name
+desc table_name
+```
+
+## 事务
+
+* 什么是事务 简单来说事务就是 一系列增删改指令的集合
+
+* 在事务中的增删改数据要么都成功要么都失败
+
+* 事务的几个基本操作
+
+  1. 开始事务 (start transaction)
+  2. 设置保存点 (savepoint name)
+  3. 回退到指定的保存点 (rollback to name)
+  4. 回退到事务起点 (rollback)
+  5. 提交事务 (commit)
+
+  * 注意一旦提交事务 将不能回退 还有一点处理事务的机制是 innodb 的存储引擎才能使用 myisam是不行的
+
+* 细节
+
+  1. 不开始事务 默认自动提交
+  2. 可以创建多个保存点
+  3. 回退的时候 可以往前回退不能往后回退
+
+## 隔离
+
+* 隔离是建立在事务的基础之上的没有事务谈不了隔离
+
+|          隔离等级          | 脏读 | 不可重复读 | 幻读 | 加锁读 |
+| :------------------------: | ---- | ---------- | ---- | ------ |
+| read uncommitted(读未提交) | √    | √          | √    | 未加锁 |
+| read committed (读已提交)  | ×    | √          | √    | 未加锁 |
+| repeatable read (可重复读) | ×    | ×          | ×    | 未加锁 |
+|  serializable (可串行化)   | ×    | ×          | ×    | 加锁   |
+
+* 脏读 : 脏读就是一个事务的在一张表上发生的改变 还没有提交的时候 另一个事务就可以看见了
+* 不可重复读 : 不可重复读就是一个事务在一张表上 修改 或删除提交后是 另一个事务可以看见
+* 幻读 : 幻读就是一个事务 在一张表进行的插入操作提交后 另一个事务看见了
+
+* 这里解释一下 : 查看数据库的正常状态 : **是从查询的时间开始 这张表数据不能变 否则就会让数据的分析和统计有误**
+
+* 加锁后 : 一个表只能有一个事务来操作
+
+## 表类型 和 表的存储引擎
+
+* 表类型就是表的存储引擎
+* 常用的就是 innoDB , myisam,memory
+* 存储引擎分为事务安全型和 非事务安全型 
+* innoDB就是事务安全型 而 myisam  和  memory就是非事务安全型
+
+1. myisam 不支持事务 不支持外键 但是他的访问速度非常的快
+2. memory  利用内存来创建一张表,数据全在内存中 一旦关机数据就会消失但是表的结构还在
+3. innoDB 是一种支持事务 支持外键 系统默认 但是效率就要低一些 并且在磁盘占的空间要大一点
+
+* 在数据不需要长期保存的时候 可以使用innoDB 如果你的数据是要长期保存 但是不怎么用到事务 就可以使用myisam  如果你要用到事务那你就必须用innoDB
+
+```MySQL
+alter table table_name engine = ''
+```
+
+## 视图
+
+* 视图就是一张虚拟表,他在底层和一张真实的表相关联的 只是通过试图让一些没有权限的用户看到的信息要少一些
+
+```MySQL
+create view view_name as (select column_name from table_name) -- 其实括号里面的是一张临时表视图就是将这张临时表保存了起来 并将数据与真实的表关联起来
+-- 更新
+alter view view_name as (一张新的临时表)
+-- 删除
+drop view view_name
+```
+
+* 注意一下的是 : 在视图中修改数据是会影响到真实表中的数据的
+
+## MySQL管理
+
+* 在系统的mysql表中有一个user表里面储存者登录者的信息
+
+1. host 是你登录的位置 即 IP地址
+2. user 是你的用户名
+3. authentication_string 密码  但是是密文密码 是 通过系统函数password() 加密而成的
+
+
+
+* 创建用户
+
+  ```MySQL
+  create user '用户名'@'IP地址' identified by '密码'
+  ```
+
+* 删除用户
+
+  ```MySQL
+  drop user '用户名'@'IP地址'
+  ```
+
+* 修改密码
+
+  ```MySQL
+  -- 修改自己的密码
+  set password = password('密码')
+  
+  -- 修改他人的密码
+  set password for '用户名'@'IP地址' = password('密码')
+  ```
+
+  
+
+![image-20220115162739605](C:/Users/%E6%95%85%E4%BA%8B%E4%B8%8E%E9%85%92/AppData/Roaming/Typora/typora-user-images/image-20220115162739605.png)
+
+* 上图中列出了MySQL 的权限
+
+
+
+* 给用户赋予权限
+
+```MySQL
+grant 权限列表 on 库.表  to 用户@IP地址 identified by '密码'
+(1) 如果用户存在就是改密码
+(2) 不存在就是创建新用户
+*.* 就是数据库中的全部数据
+库.* 就是在某个数据库的数据
+```
+
+* 回收权限
+
+  ```MySQL
+  revoke 权限 on 库.表 to  用户@IP地址
+  ```
+
+  

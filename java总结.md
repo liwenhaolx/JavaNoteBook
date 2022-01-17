@@ -290,3 +290,34 @@ public final class Class<T> implements java.io.Serializable,
 
 * 在反射的机制里 万物都是对象 方法也是一个对象 字段(属性)也是一个对象,构造器也是对象,具体的方法可以参考**反射的笔记**
 
+## 泛型
+
+* 泛型就是广泛的类型 但是看起来是美好的 泛型是类型的变量 其实只不过是用了类型转换的
+
+```java
+public Test <T>{
+    public Test( T t){
+        System.out.println("我是构造器!!" + T);
+    }
+    
+    public static void main (String[] args){
+        Test<String> test = new Test<>("haha");
+    }
+}
+
+
+//就相当于
+public Test <Object>{
+    public Test( Object t){
+        System.out.println("我是构造器!!" + (String)t);
+    }
+    
+    public static void main (String[] args){
+        Test<String> test = new Test<>("haha");
+    }
+}
+```
+
+* **其实实际上这是编译器帮我们把T换成了Object 然后进行了安全的强制类型转换**
+
+其他细节参考**泛型笔记**
